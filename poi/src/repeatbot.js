@@ -4,13 +4,12 @@ import { IgnoreUsers } from '@qqbot/utils'
 export default class RepeatBot {
   QueueSize = 20
   RepeatMinLen = 6
-  RepeatMinCount = 2
-  RepeatMaxCount = 4
+  RepeatMinCount = 1 //2
+  RepeatMaxCount = 1 //4
 
   constructor() {
     this.queue = []
-    this.rq1 = new RandomQueue([true, false, false], 2)
-    this.rq2 = new RandomQueue([true, false, false, false, false])
+    this.rq1 = new RandomQueue([true, true, true], 2)
   }
 
   handleGroupMsg(ctx) {
@@ -42,11 +41,12 @@ export default class RepeatBot {
     }
 
     // Ban4 event
-    // if (msg.repeated && !await CQ.isAdmin(group, user) && this.rq1.pop()) {
-    //   const record = await BanRecord.get(user)
-    //   record.decrease()
-    //   await BanRecord.put(record)
-    //   CQ.setGroupBan(group, user, 1)
+    // if (msg.repeated && this.rq1.pop()) {
+    //   return ['set_group_ban', {
+    //     group_id: ctx.group_id,
+    //     user_id : ctx.user_id,
+    //     duration: 60,
+    //   }]
     // }
     // if (config.SPBanUsers.includes(user) && this.rq2.pop()) {
     //   const minutes = Math.ceil(Math.random() * 6)

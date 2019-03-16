@@ -19,8 +19,20 @@ QQ.on('message.group', (e, ctx) => {
     return
   for (const bot of Bots) {
     const ret = bot.handleGroupMsg(ctx)
-    if (ret == null) continue   // return `null` to continue
-    return ret                  // return anything to stop
+
+    // return `null` to continue
+    if (ret == null) continue
+
+    // return string to reply & stop
+    if (typeof ret === 'string')
+      return ret
+
+    // return Array[method, content] to call & stop
+    if (ret instanceof Array) {
+      const [ method, content ] = ret
+      QQ(method, content)
+      return
+    }
   }
 })
 
