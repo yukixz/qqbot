@@ -1,0 +1,14 @@
+#!/bin/bash
+
+OLDPATH=$PATH
+WORKDIR="$(cd $(dirname $0) && pwd)"
+cd "$WORKDIR"
+
+for p in utils poi; do
+    echo "======== $p ========"
+    pushd $p
+    export PATH="$WORKDIR/$p/node_modules/.bin":$OLDPATH
+    babel src -d app
+    rsync -avP app index.js package.json package-lock.json ***REMOVED***:/app/qqbot/$p/
+    popd
+done

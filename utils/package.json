@@ -1,10 +1,10 @@
 {
-  "name": "@qqbot/poi",
-  "description": "QQBot/poi",
+  "name": "@qqbot/utils",
+  "description": "QQBot/utils",
   "author": "Dazzy Ding",
   "license": "Apache-2.0",
   "repository": "none",
-  "main": "index.js",
+  "main": "app/index.js",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
@@ -13,8 +13,5 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.15.2"
   },
-  "dependencies": {
-    "cq-websocket": "^2.0.0",
-    "lodash": "^4.17.11"
-  }
+  "dependencies": {}
 }
