@@ -1,8 +1,9 @@
 import { CQWebSocket } from 'cq-websocket'
-import { CQHTTP_WS_HOST, CQHTTP_WS_PORT } from '@qqbot/utils'
+import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
 import RepeatBot from './repeatbot'
 import RollBot from './rollbot'
 
+injectCQWS(CQWebSocket)
 const QQ = new CQWebSocket({
   host: CQHTTP_WS_HOST,
   port: CQHTTP_WS_PORT,
