@@ -4,7 +4,8 @@ OLDPATH=$PATH
 WORKDIR="$(cd $(dirname $0) && pwd)"
 cd "$WORKDIR"
 
-for p in utils debug poi; do
+[[ -n "$@" ]] && PROJECTS="$@" || PROJECTS="utils debug poi"
+for p in $PROJECTS; do
     printf "======== %5s ========\n" $p
     pushd $p
     export PATH="$WORKDIR/$p/node_modules/.bin":$OLDPATH
