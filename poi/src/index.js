@@ -1,19 +1,12 @@
 import _ from 'lodash'
-import { CQWebSocket, CQAt } from "cq-websocket"
+import { CQWebSocket, CQAt } from 'cq-websocket'
+import { CQHTTP_WS_HOST, CQHTTP_WS_PORT } from '@qqbot/utils'
 
 const bot = new CQWebSocket({
-  host: "127.0.0.1",
-  port: 12452,
+  host: CQHTTP_WS_HOST,
+  port: CQHTTP_WS_PORT,
 })
-bot
-  .on('socket.error', console.error)
-  .on('socket.connecting', (wsType) => console.log(`[${wsType}] Connecting...`))
-  .on('socket.connect', (wsType, _, attempts) => console.log(`[${wsType}] Connected in ${attempts} attempts`))
-  .on('socket.failed', (wsType, attempts) => console.log(`[${wsType}] Connect failed on ${attempts} attempts`))
-  .on('socket.close', (wsType, code, desc) => console.log(`[${wsType}] Connect close: ${code} ${desc}`))
-  .on('ready', () => console.log(`QQBot ready`))
-  .on('api.response', (resObj) => console.log('Response: %O', resObj))
-  .connect()
+bot.on('ready', () => console.log(`QQBot ready`)).connect()
   .on('message.group', (e, ctx) => {
     // poi & yuki
     if (ctx.group_id in [***REMOVED***, ***REMOVED***])

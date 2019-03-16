@@ -4,8 +4,8 @@ OLDPATH=$PATH
 WORKDIR="$(cd $(dirname $0) && pwd)"
 cd "$WORKDIR"
 
-for p in utils poi; do
-    echo "======== $p ========"
+for p in utils debug poi; do
+    printf "======== %5s ========\n" $p
     pushd $p
     export PATH="$WORKDIR/$p/node_modules/.bin":$OLDPATH
     babel src -d app
