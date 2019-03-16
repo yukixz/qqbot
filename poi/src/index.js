@@ -1,5 +1,6 @@
 import { CQWebSocket } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT } from '@qqbot/utils'
+import RepeatBot from './repeatbot'
 import RollBot from './rollbot'
 
 const QQ = new CQWebSocket({
@@ -10,6 +11,7 @@ QQ.on('ready', () => console.log(`QQBot ready`)).connect()
 
 const Bots = [
   new RollBot(),
+  new RepeatBot(),
 ]
 QQ.on('message.group', (e, ctx) => {
   // poi & yuki

@@ -46,6 +46,6 @@ export default class RollBot {
         rolls.push(range[Math.floor(Math.random()*range.length)])
     }
 
-   return [`[roll]`, new CQAt(user), ...rolls].join(' ')
+   return [new CQAt(user), `[roll]`, ...rolls].join(' ')
   }
 }
