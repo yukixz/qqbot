@@ -12,7 +12,7 @@ export default class RepeatBot {
     this.rq1 = new RandomQueue([true, true, true], 2)
   }
 
-  handleGroupMsg(ctx) {
+  async handleGroupMsg(ctx) {
     const user = ctx.user_id
     const message = ctx.message
     if (IgnoreUsers.includes(user))

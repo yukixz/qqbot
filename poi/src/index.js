@@ -10,16 +10,22 @@ const QQ = new CQWebSocket({
 })
 QQ.on('ready', () => console.log(`QQBot ready`)).connect()
 
+// Export constant `QQ` to global scope
+Object.defineProperty(global, 'QQ', {
+  get: () => { return QQ },
+  set: () => { throw TypeError('Assignment to constant variable.') },
+})
+
 const Bots = [
   new RollBot(),
   new RepeatBot(),
 ]
-QQ.on('message.group', (e, ctx) => {
+QQ.on('message.group', async (e, ctx) => {
   // poi & yuki
   if (ctx.group_id in [***REMOVED***, ***REMOVED***])
     return
   for (const bot of Bots) {
-    const ret = bot.handleGroupMsg(ctx)
+    const ret = await bot.handleGroupMsg(ctx)
 
     // return `null` to continue
     if (ret == null) continue

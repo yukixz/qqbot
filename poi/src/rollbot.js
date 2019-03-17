@@ -7,7 +7,7 @@ export default class RollBot {
   Upper = 9999
   Separator = ','
 
-  handleGroupMsg(ctx) {
+  async handleGroupMsg(ctx) {
     const user = ctx.user_id
     const message = ctx.message.toLowerCase()
     const parts = textsplit(message)
@@ -46,6 +46,6 @@ export default class RollBot {
         rolls.push(range[Math.floor(Math.random()*range.length)])
     }
 
-   return [new CQAt(user), `[roll]`, ...rolls].join(' ')
+    return [new CQAt(user), `[roll]`, ...rolls].join(' ')
   }
 }
