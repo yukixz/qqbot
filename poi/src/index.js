@@ -31,8 +31,9 @@ const Bots = [
 ]
 QQ.on('message.group', async (e, ctx, ...args) => {
   // poi & yuki
-  if (ctx.group_id in [***REMOVED***, ***REMOVED***])
+  if (![***REMOVED***, ***REMOVED***].includes(ctx.group_id))
     return
+  console.log(`message.group ${ctx.group_id} ${ctx.user_id} ${ctx.message}`)
   for (const bot of Bots) {
     const ret = await bot.handleGroupMsg(ctx, ...args)
 

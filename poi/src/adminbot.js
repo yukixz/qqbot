@@ -1,12 +1,11 @@
 import _ from 'lodash'
+import { CQAt } from 'cq-websocket'
 import { textmatch, textsplit } from '@qqbot/utils'
 /* global QQ, DB */
 
 const BanDefaultDuration =       1  // Minutes
 const BanResetTime       = 20 * 60 * 60 * 1000  // Milliseconds
 const IgnoredWords = [
-  "av",
-  "gv",
   "傻",
   "笨",
   "蠢",
@@ -79,8 +78,8 @@ export default class AdminBot {
     }
 
     // Ban management
-    // if (await QQ.isGroupAdmin(group, user)) {
-      // const parts = textsplit(message)
+    if (await QQ.isGroupAdmin(group, user)) {
+      const parts = textsplit(message)
       // if (parts[0] === '/bantop') {
       //   let n = Number(parts[1])
       //   if (Number.isNaN(n)) n = undefined
@@ -94,19 +93,13 @@ export default class AdminBot {
       //   }
       //   return texts.join('\n')
       // }
-      // if (parts[0] === '/banget') {
-      //   const at = CQAt.parse(parts[1])
-      //   if (at != null) {
-      //     const {qq} = at
-      //     const info = await CQ.getGroupMemberInfo(group, qq, false)
-      //     const record = await BanRecord.get(qq)
-      //     CQ.sendGroupMsg(group, `禁言次数：${info.name} ${record.count}`)
-      //   } else {
-      //     CQ.sendGroupMsg(group, `Error parsing command parameters`)
-      //   }
-      //   return BotBlock
-      // }
-    // }
+      if (parts[0] === '/banget' && tags[1] instanceof CQAt) {
+        const { qq } = tags[1]
+        const name = await QQ.getGroupMemberName(ctx.group_id, qq)
+        const record = await BanRecord.get(qq)
+        return `禁言次数：${name} ${record.count}`
+      }
+    }
     // if (Stewards.includes(user)) {
     //   const parts = textsplit(message)
     //   if (parts[0] === '/banset') {
