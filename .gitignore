@@ -83,3 +83,6 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+# Compiled deployment code
+app/
