@@ -1,5 +1,8 @@
+import levelup from 'levelup'
+import leveldown from 'leveldown'
 import { CQWebSocket } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
+import AdminBot from './adminbot'
 import RepeatBot from './repeatbot'
 import RollBot from './rollbot'
 
@@ -10,25 +13,34 @@ const QQ = new CQWebSocket({
 })
 QQ.on('ready', () => console.log(`QQBot ready`)).connect()
 
-// Export constant `QQ` to global scope
-Object.defineProperty(global, 'QQ', {
-  get: () => { return QQ },
-  set: () => { throw TypeError('Assignment to constant variable.') },
-})
+const DB_PATH = './db'
+const DB = levelup(leveldown(DB_PATH))
+
+// Export constants to global scope
+for (const [k, v] of [['QQ', QQ], ['DB', DB]]) {
+  Object.defineProperty(global, k, {
+    get: () => { return v },
+    set: () => { throw TypeError('Assignment to constant variable.') },
+  })
+}
 
 const Bots = [
+  new AdminBot(),
   new RollBot(),
   new RepeatBot(),
 ]
-QQ.on('message.group', async (e, ctx) => {
+QQ.on('message.group', async (e, ctx, ...args) => {
   // poi & yuki
   if (ctx.group_id in [***REMOVED***, ***REMOVED***])
     return
   for (const bot of Bots) {
-    const ret = await bot.handleGroupMsg(ctx)
+    const ret = await bot.handleGroupMsg(ctx, ...args)
 
     // return `null` to continue
     if (ret == null) continue
+
+    // return `true` to stop
+    if (ret == true) return
 
     // return string to reply & stop
     if (typeof ret === 'string')

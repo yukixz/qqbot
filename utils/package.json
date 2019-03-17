@@ -13,5 +13,7 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.15.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "lodash": "^4.17.11"
+  }
 }
