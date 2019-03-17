@@ -9,7 +9,7 @@ export default class RepeatBot {
 
   constructor() {
     this.queue = []
-    this.rq1 = new RandomQueue([true, true, true], 2)
+    this.rq1 = new RandomQueue([true, false, false], 2)
   }
 
   async handleGroupMsg(ctx) {
