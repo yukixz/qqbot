@@ -1,6 +1,7 @@
 import { CQWebSocket } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
 import { Stewards, IgnoreUsers, PoiGroups } from '@qqbot/utils'
+import Duel from './duel'
 import RussianRoulette from './russian'
 
 injectCQWS(CQWebSocket)
@@ -26,8 +27,8 @@ function getGroupStore(group) {
   const g = {
     Group: group,
     Bots: [
+      new Duel(),
       new RussianRoulette(),
-      // new Duel(),
     ],
     OpenMap: {},
   }
