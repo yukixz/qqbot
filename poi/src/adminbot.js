@@ -22,11 +22,7 @@ const IgnoredWords = [
 const BannedWords = [
   {
     keywords: ["我要口球"],
-    duration: 1,
-  },
-  {
-    keywords: [],
-    duration: 10 * 24 * 60,
+    duration: 1 * 60,
   },
 ]
 
@@ -44,7 +40,7 @@ export default class AdminBot {
     //   return BotBlock
 
     // SystemMessage: User banned
-    if (user === '1000000') {
+    if (user === 1000000) {
       const m = message.match(this.BannedPattern)
       if (m != null) {
         const bannedUser = parseInt(m[1])
