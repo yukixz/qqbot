@@ -41,13 +41,13 @@ export default class RepeatBot {
     }
 
     // Ban4 event
-    if (msg.repeated && this.rq1.pop()) {
-      return ['set_group_ban', {
-        group_id: ctx.group_id,
-        user_id : ctx.user_id,
-        duration: 60,
-      }]
-    }
+    // if (msg.repeated && this.rq1.pop()) {
+    //   return ['set_group_ban', {
+    //     group_id: ctx.group_id,
+    //     user_id : ctx.user_id,
+    //     duration: 60,
+    //   }]
+    // }
     // if (config.SPBanUsers.includes(user) && this.rq2.pop()) {
     //   const minutes = Math.ceil(Math.random() * 6)
     //   CQ.setGroupBan(group, user, minutes)
