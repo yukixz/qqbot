@@ -4,7 +4,9 @@ import { textmatch, textsplit } from '@qqbot/utils'
 /* global QQ, DB */
 
 const BanDefaultDuration =       1  // Minutes
-const BanResetTime       = 20 * 60 * 60 * 1000  // Milliseconds
+const BanMaxDuration     = 16 * 60  // Minutes
+const BanResetDuration   = 16 * 60 * 60 * 1000  // Milliseconds
+const BanRedPacketMultiplier = 60
 const IgnoredWords = [
   "傻",
   "笨",
@@ -25,6 +27,12 @@ const BannedWords = [
     duration: 1 * 60,
   },
 ]
+BannedWords.unshift(...BannedWords.map(origin => {
+  const bw = Object.assign({}, origin)
+  bw.keywords = bw.keywords.map(s => `[CQ:hb,title=${s}]`)
+  bw.duration = bw.duration * BanRedPacketMultiplier
+  return bw
+}))
 
 export default class AdminBot {
   BannedPattern   = /\((\d+)\) *被管理员禁言/
@@ -58,6 +66,7 @@ export default class AdminBot {
         if (keywords == null) continue
         if (duration == null) duration = BanDefaultDuration
         duration *= record.multiplier
+        duration = duration > BanMaxDuration ? BanMaxDuration : duration
         if (textmatch(message, keywords)) {
           return ['set_group_ban', {
             group_id: ctx.group_id,
@@ -116,7 +125,7 @@ class BanRecord {
       this.count = 0
     }
     if (typeof arg === 'object') {
-      if ((Date.now() - arg.last) > BanResetTime)
+      if ((Date.now() - arg.last) > BanResetDuration)
         return new BanRecord(arg.user)
       this.user  = arg.user
       this.last  = arg.last
