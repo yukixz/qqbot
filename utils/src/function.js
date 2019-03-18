@@ -12,3 +12,7 @@ export function textmatch(text, keywords) {
       return true
   return false
 }
+
+export function choice(array) {
+  return array[Math.floor(Math.random() * array.length)]
+}

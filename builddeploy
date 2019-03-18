@@ -4,7 +4,7 @@ OLDPATH=$PATH
 WORKDIR="$(cd $(dirname $0) && pwd)"
 cd "$WORKDIR"
 
-[[ -n "$@" ]] && PROJECTS="$@" || PROJECTS="utils debug poi"
+[[ -n "$@" ]] && PROJECTS="$@" || PROJECTS="utils debug poi game"
 for p in $PROJECTS; do
     printf "======== %5s ========\n" $p
     pushd $p
