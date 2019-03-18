@@ -95,30 +95,22 @@ export default class AdminBot {
       // }
       if (parts[0] === '/banget' && tags[1] instanceof CQAt) {
         const { qq } = tags[1]
-        const name = await QQ.getGroupMemberName(ctx.group_id, qq)
         const record = await BanRecord.get(qq)
+        const name = await QQ.getGroupMemberName(ctx.group_id, qq)
         return `禁言次数：${name} ${record.count}`
       }
+      if (parts[0] === '/banset' && tags[1] instanceof CQAt) {
+        const { qq } = tags[1]
+        const count = Number(parts[2])
+        if (Number.isNaN(count)) return
+        const record = await BanRecord.get(qq)
+        record.last  = Date.now()
+        record.count = count
+        await BanRecord.put(record)
+        const name = await QQ.getGroupMemberName(ctx.group_id, qq)
+        return `设置禁言次数：${name} ${record.count}`
+      }
     }
-    // if (Stewards.includes(user)) {
-    //   const parts = textsplit(message)
-    //   if (parts[0] === '/banset') {
-    //     const at = CQAt.parse(parts[1])
-    //     const n = Number(parts[2])
-    //     if (at != null && !Number.isNaN(n)) {
-    //       const {qq} = at
-    //       const info = await CQ.getGroupMemberInfo(group, qq, false)
-    //       const record = await BanRecord.get(qq)
-    //       record.last  = Date.now()
-    //       record.count = n
-    //       await BanRecord.put(record)
-    //       CQ.sendGroupMsg(group, `设置禁言次数：${info.name} ${record.count}`)
-    //     } else {
-    //       CQ.sendGroupMsg(group, `Error parsing command parameters`)
-    //     }
-    //     return BotBlock
-    //   }
-    // }
   }
 }
 

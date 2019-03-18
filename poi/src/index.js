@@ -1,5 +1,4 @@
-import levelup from 'levelup'
-import leveldown from 'leveldown'
+import level from 'level'
 import { CQWebSocket } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
 import AdminBot from './adminbot'
@@ -14,7 +13,10 @@ const QQ = new CQWebSocket({
 QQ.on('ready', () => console.log(`QQBot ready`)).connect()
 
 const DB_PATH = './db'
-const DB = levelup(leveldown(DB_PATH))
+const DB = level(DB_PATH, {
+  keyEncoding  : 'utf8',
+  valueEncoding: 'json',
+})
 
 // Export constants to global scope
 for (const [k, v] of [['QQ', QQ], ['DB', DB]]) {
