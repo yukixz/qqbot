@@ -141,7 +141,7 @@ export default class RussianRoulette {
       await this.end()
     }
   }
- fire0 = async () => {
+  fire0 = async () => {
     const player = this.players[this.curr]
     this.msgs.push(`下一个：${new CQAt(player.qq)}，请开枪`)
     await this.sendQQMsg()
