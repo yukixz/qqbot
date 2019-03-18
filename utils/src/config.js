@@ -5,6 +5,11 @@ export const Stewards = [
   ***REMOVED***,
 ]
 export const IgnoreUsers = [
+  ***REMOVED***, // AlphaPoi(BOT)
 ]
 export const IgnoreGroups = [
+]
+export const PoiGroups = [
+  ***REMOVED***,  // poi
+  ***REMOVED***,  // yuki
 ]

@@ -1,6 +1,7 @@
 import level from 'level'
 import { CQWebSocket } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
+import { PoiGroups } from '@qqbot/utils'
 import AdminBot from './adminbot'
 import RepeatBot from './repeatbot'
 import RollBot from './rollbot'
@@ -33,7 +34,7 @@ const Bots = [
 ]
 QQ.on('message.group', async (e, ctx, ...args) => {
   // poi & yuki
-  if (![***REMOVED***, ***REMOVED***].includes(ctx.group_id))
+  if (! PoiGroups.includes(ctx.group_id))
     return
   console.log(`message.group ${ctx.group_id} ${ctx.user_id} ${ctx.message}`)
   for (const bot of Bots) {
