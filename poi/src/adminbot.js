@@ -76,19 +76,17 @@ export default class AdminBot {
     // Ban management
     if (await QQ.isGroupAdmin(group, user)) {
       const parts = textsplit(message)
-      // if (parts[0] === '/bantop') {
-      //   let n = Number(parts[1])
-      //   if (Number.isNaN(n)) n = undefined
-      //   const topN = await BanRecord.top(n)
-      //   const texts = ["**** 禁言次数排名 ****"]
-      //   for (const {user: qq, count} of topN) {
-      //     // info.status = 0,-10
-      //     // const info = await CQ.getGroupMemberInfo(group, qq, false)
-      //     // const name = info.card || info.name
-      //     texts.push(`${qq} ${count}`)
-      //   }
-      //   return texts.join('\n')
-      // }
+      if (parts[0] === '/bantop') {
+        let n = Number(parts[1])
+        if (Number.isNaN(n)) n = undefined
+        const topN = await BanRecord.top(n)
+        const texts = ["**** 禁言次数排名 ****"]
+        for (const {user: qq, count} of topN) {
+          const name = await QQ.getGroupMemberName(ctx.group_id, qq)
+          texts.push(`${name} ${count}`)
+        }
+        return texts.join('\n')
+      }
       if (parts[0] === '/banget' && tags[1] instanceof CQAt) {
         const { qq } = tags[1]
         const record = await BanRecord.get(qq)
@@ -154,10 +152,17 @@ class BanRecord {
     }
   }
   static async top(n=3) {
-    let records = _.map(await DB.getAll(),
-      (raw, key) => key.match(/^BanRecord-\d+$/) ? new BanRecord(raw) : null)
+    let records = await new Promise((resolve, reject) => {
+      const ret = {}
+      DB.createReadStream()
+        .on('data' , ({key, value}) => ret[key] = value)
+        .on('close',   () => resolve(ret))
+        .on('end'  ,   () => resolve(ret))
+        .on('error',  err => reject(err))
+    })
+    records = _.map(records, (raw, key) => key.match(/^BanRecord-\d+$/) ? new BanRecord(raw) : null)
     records = records.filter(r => r && r.count > 0)
-    records = records.sort((a, b) => b.count - a.count)  // Sort from bigger to smaller
+    records = records.sort((a, b) => b.count - a.count)  // descending order
     return records.slice(0, n)
   }
 }
