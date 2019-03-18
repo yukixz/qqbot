@@ -85,6 +85,6 @@ typings/
 .dynamodb/
 
 # Compiled deployment code
-app/
+/*/app/
 # Filled deployment config.js
-config.js
+/utils/src/config.js
