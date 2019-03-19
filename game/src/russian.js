@@ -3,7 +3,12 @@ import { CQAt } from 'cq-websocket'
 import { choice } from '@qqbot/utils'
 /* global QQ */
 
-// Bots
+const templace = (tmpl) =>
+  tmpl.reduce((prev, words) =>
+    _.flatten(prev.map(p =>
+      words.map(w => p + w)
+    )), [''])
+
 export default class RussianRoulette {
   Name    = "俄罗斯轮盘"
   Aliases = []
@@ -13,6 +18,28 @@ export default class RussianRoulette {
   DeadMinutes = 10
   JoinMessages = ["加入", "参加", "join"]
   FireMessages = ["开火", "开枪", "fire"]
+
+  FireDieMessages = [
+    ...templace([
+      [ "{at}" ],
+      [ "颤颤巍巍", "毫不犹豫", "一脸懵逼", "生无可恋" ],
+      [ "地扣动了扳机，" ],
+      [ "然而——好运没有降临" ],
+    ]),
+    ...templace([
+      [ "砰！一声枪声响起，", "枪口冒出火舌，" ],
+      [ "{at}" ],
+      [ "倒在了血泊中", "倒在了赌桌上", "倒在了吃瓜群众的怀中", "迈向了二次元的入口", "的身上绽放出了生命之花" ],
+    ]),
+  ]
+  FireSafeMessages = [
+    ...templace([
+      [ "{at}" ],
+      [ "颤颤巍巍", "毫不犹豫", "一脸懵逼", "生无可恋" ],
+      [ "地扣动了扳机，" ],
+      [ "然而——什么都没有发生", "围观群众发出了失望的叹息" ],
+    ]),
+  ]
 
   constructor() {
     this.inGame = false
@@ -156,9 +183,11 @@ export default class RussianRoulette {
     if (this.revolver.pop()) {
       player.isAlive = false
       await this.setQQBan(player.qq, this.DeadMinutes)
-      this.msgs.push(`${choice(["砰！一声枪声响起", "枪口冒出火舌"])}，${new CQAt(player.qq)}倒在了${choice(["血泊中", "吃瓜群众的怀中", "赌桌上"])}。`)
+      // this.msgs.push(`${choice(["砰！一声枪声响起", "枪口冒出火舌"])}，${new CQAt(player.qq)}倒在了${choice(["血泊中", "吃瓜群众的怀中", "赌桌上"])}。`)
+      this.msgs.push(choice(this.FireDieMessages).replace('{at}', new CQAt(player.qq)))
     } else {
-      this.msgs.push(`${new CQAt(user)}${choice(["颤颤巍巍", "毫不犹豫", "一脸赴死", "一脸懵逼", "毫无茫然", "生无可恋"])}地把扣动扳机，然而什么都没有发生。`)
+      // this.msgs.push(`${new CQAt(user)}${choice(["颤颤巍巍", "毫不犹豫", "一脸赴死", "一脸懵逼", "毫无茫然", "生无可恋"])}地把扣动扳机，然而什么都没有发生。`)
+      this.msgs.push(choice(this.FireSafeMessages).replace('{at}', new CQAt(player.qq)))
     }
 
     await this.next()
