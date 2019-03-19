@@ -4,7 +4,7 @@ OLDPATH=$PATH
 WORKDIR="$(cd $(dirname $0) && pwd)"
 cd "$WORKDIR"
 
-[[ -z "$DEPLOYHOST" ]] && echo "Please set env `DEPLOYHOST`" && exit 1
+[[ -z "$DEPLOYHOST" ]] && echo "DEPLOYHOST is not set."
 
 [[ -n "$@" ]] && PROJECTS="$@" || PROJECTS="utils debug poi game"
 for p in $PROJECTS; do
@@ -12,6 +12,7 @@ for p in $PROJECTS; do
     pushd $p
     export PATH="$WORKDIR/$p/node_modules/.bin":$OLDPATH
     babel src -d app
-    rsync -avP app index.js package.json package-lock.json $DEPLOYHOST:/app/qqbot/$p/
+    [[ -n "$DEPLOYHOST" ]] && \
+        rsync -avP app index.js package.json package-lock.json $DEPLOYHOST:/app/qqbot/$p/
     popd
 done
