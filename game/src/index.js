@@ -56,7 +56,7 @@ function getGroupStore(group) {
   return g
 }
 function adminCommand(ctx) {
-  if (ctx.message === '/gmin') {
+  if (ctx.message === '/gin') {
     const texts = []
     for (const g of Object.values(GroupStores)) {
       const bot = g.Bots.find(b => b.inGame)
@@ -65,7 +65,7 @@ function adminCommand(ctx) {
     }
     return (texts.length > 0) ? texts.join('\n') : 'No game'
   }
-  if (ctx.message === '/gmca') {
+  if (ctx.message === '/gcc') {
     for (const g of Object.values(GroupStores)) {
       for (const b of g.Bots) {
         b.inGame = false
