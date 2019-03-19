@@ -15,7 +15,7 @@ export default class Duel {
   BulletLimit      = 2
   JoinMessages = ["加入", "参加", "join"]
   FireMessages = ["开火", "开枪", "fire"]
-  QuitMessages = ["退出", "quit", "leave"]
+  // QuitMessages = ["退出", "quit", "leave"]
 
   constructor() {
     this.inGame = false
@@ -50,15 +50,15 @@ export default class Duel {
       if (this.JoinMessages.includes(message)) {
         await this.join(user)
       }
-      if (this.QuitMessages.includes(message)) {
-        await this.quit(user)
-      }
+      // if (this.QuitMessages.includes(message)) {
+      //   await this.quit(user)
+      // }
     }
-    if (this.status === "Confirm") {
-      if (this.QuitMessages.includes(message)) {
-        await this.quit(user)
-      }
-    }
+    // if (this.status === "Confirm") {
+    //   if (this.QuitMessages.includes(message)) {
+    //     await this.quit(user)
+    //   }
+    // }
     if (this.status === "Wait" || this.status === "Fire") {
       if (this.FireMessages.includes(message)) {
         await this.firePlayer(user)
@@ -75,7 +75,7 @@ export default class Duel {
       `生死看淡，不服就干！`,
       `决斗将在 ${this.JoinSeconds} 秒后开始。`,
       `参加：${this.JoinMessages.join('/')}`,
-      `退出：${this.QuitMessages.join('/')}`,
+      // `退出：${this.QuitMessages.join('/')}`,
       `开枪：${this.FireMessages.join('/')}`,
     ].join('\n'))
     this.tid = setTimeout(this.start, this.JoinSeconds * 1000)
@@ -105,14 +105,14 @@ export default class Duel {
       }
     }
   }
-  quit = async (user) => {
-    // User must be in game
-    if (this.players.find(p => p.qq === user) == null) return
-    this.msgs.push(`${new CQAt(user)}临阵逃脱了！`)
-    // Refactor these if supporting more than two players
-    if (this.status === "Confirm")
-      await this.cancel()
-  }
+  // quit = async (user) => {
+  //   // User must be in game
+  //   if (this.players.find(p => p.qq === user) == null) return
+  //   this.msgs.push(`${new CQAt(user)}临阵逃脱了！`)
+  //   // Refactor these if supporting more than two players
+  //   if (this.status === "Confirm")
+  //     await this.cancel()
+  // }
   start = async () => {
     clearTimeout(this.tid)
     if (this.players.length < 2) {
@@ -122,9 +122,10 @@ export default class Duel {
     } else {
       this.status = "Confirm"
       this.msgs.push(`决斗确认：${this.players.map(p => new CQAt(p.qq)).join(' ')}`)
-      this.msgs.push(`若不参加，请在 ${this.ConfirmSeconds} 秒内退出`)
-      this.tid = setTimeout(this.confirm, this.ConfirmSeconds * 1000)
-      await this.sendQQMsg()
+      // this.msgs.push(`若不参加，请在 ${this.ConfirmSeconds} 秒内退出`)
+      // this.tid = setTimeout(this.confirm, this.ConfirmSeconds * 1000)
+      // await this.sendQQMsg()
+      await this.confirm()
     }
   }
   end = async () => {
