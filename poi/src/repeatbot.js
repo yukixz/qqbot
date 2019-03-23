@@ -4,8 +4,8 @@ import { IgnoreUsers } from '@qqbot/utils'
 export default class RepeatBot {
   QueueSize = 20
   RepeatMinLen = 6
-  RepeatMinCount = 2
-  RepeatMaxCount = 4
+  RepeatMinCount = 3
+  RepeatMaxCount = 5
 
   constructor() {
     this.queue = []
