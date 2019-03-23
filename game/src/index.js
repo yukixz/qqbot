@@ -15,7 +15,7 @@ QQ.on('ready', () => console.log(`QQBot ready`)).connect()
 for (const [k, v] of [['QQ', QQ]]) {
   Object.defineProperty(global, k, {
     get: () => { return v },
-    set: () => { throw TypeError('Assignment to constant variable.') },
+    set: () => { throw new TypeError('Assignment to constant variable.') },
   })
 }
 
