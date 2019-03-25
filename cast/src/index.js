@@ -1,12 +1,11 @@
 import { CQWebSocket } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
 import { IgnoreUsers, PoiGroups } from '@qqbot/utils'
-import { splittext } from '@qqbot/utils'
+import { textsplit } from '@qqbot/utils'
 import { initStore, getStore, putStore } from './store'
 import BanUser from './ban'
 
 initStore('./db')
-
 injectCQWS(CQWebSocket)
 const QQ = new CQWebSocket({
   host: CQHTTP_WS_HOST,
@@ -29,28 +28,40 @@ for (const Skill of [ BanUser ]) {
   }
 }
 
-const activeSkills = []
+const runtimes = []
 QQ.on('message.group', async (e, ctx) => {
   const { user_id, group_id, message } = ctx
-  const parts = splittext(message)
   if (IgnoreUsers.includes(user_id))
     return
   if (! PoiGroups.includes(group_id))
-    return
-  if (! parts[0] === "/cast")
     return
   console.log(`message.group ${ctx.group_id} ${ctx.user_id} ${ctx.message}`)
 
   const g = await getStore(group_id, {
     group_id: group_id,
   })
+  const r = runtimes[group_id] || {
+    skills: [],
+  }
 
-  const [ cast, name, ...args ] = parts
-  const Skill = SkillMap[name]
-  const skill = new Skill(args, ctx)
-  activeSkills.push(skill)
-
-
+  // Cast new skill
+  const parts = textsplit(message)
+  if (parts[0] === '/cast') {
+    const [ _, name, ...args ] = parts
+    const Skill = SkillMap[name]
+    const skill = new Skill(args, ctx)
+    r.skills.push(skill)
+  }
+  // Handle active skills
+  else {
+    for (const skill of r.skills) {
+      if (skill.handleMsg != null)
+        skill.handleMsg(message)
+    }
+  }
+  // Clean inactive skill
+  console.log(r)
+  r.skills = r.skills.filter(s => s.active)
 
   await putStore(group_id, g)
 })

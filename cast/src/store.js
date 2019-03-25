@@ -19,7 +19,7 @@ export async function getStore(key, defaultValue) {
   if (key == null)
     throw new TypeError(`Parameter 'key' is 'null'.`)
   try {
-    return await DB.get(`Store:${key}`)
+    return await db.get(`Store:${key}`)
   }
   catch (err) {
     if (err.name === 'NotFoundError')
@@ -35,5 +35,5 @@ export async function putStore(key, value) {
     throw new TypeError(`Parameter 'key' is 'null'.`)
   if (value == null)
     throw new TypeError(`Parameter 'value' is 'null'.`)
-  return await DB.put(`Store:${key}`, value)
+  return await db.put(`Store:${key}`, value)
 }

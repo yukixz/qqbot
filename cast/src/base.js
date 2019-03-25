@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { parse as parseCQTags, CQAt } from 'cq-websocket'
 
 export default class BaseSkill {
@@ -8,13 +9,14 @@ export default class BaseSkill {
     // { name: 'duration', type: Number, default: 60 },
   ]
 
+  active = true
+
   constructor(args, ctx) {
     this.parseOptions(args)
-    this.active = true
   }
 
   parseOptions(args) {
-    for (const [Opt, arg] of _.zip(this.Options, args)) {
+    for (const [Opt, arg] of _.zip(this.constructor.Options, args)) {
       if (Opt == null)
         break
       if (arg == null) {

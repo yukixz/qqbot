@@ -14,12 +14,18 @@ export default class BanUser extends BaseSkill {
     super(args)
     this.active = false
 
-    const { group_id, user_id } = ctx
-    const target_id = this.target.qq
-    if (QQ.isGroupAdmin(group_id, user_id) && !QQ.isGroupAdmin(group_id, target_id)) {
+    this.group_id  = ctx.group_id
+    this.user_id   = ctx.user_id
+    this.target_id = this.target.qq
+    setTimeout(this.ban, 0)
+  }
+
+  ban = async () => {
+    if (await QQ.isGroupAdmin(this.group_id, this.user_id) &&
+        !await QQ.isGroupAdmin(this.group_id, this.target_id)) {
       QQ('set_group_ban', {
-        group_id: group_id,
-        user_id : target_id,
+        group_id: this.group_id,
+        user_id : this.target_id,
         duration: this.duration * 60 * 60,
       })
     }
