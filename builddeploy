@@ -6,7 +6,7 @@ cd "$WORKDIR"
 
 [[ -z "$DEPLOYHOST" ]] && echo "DEPLOYHOST is not set."
 
-[[ -n "$@" ]] && PROJECTS="$@" || PROJECTS="utils debug poi game"
+[[ -n "$@" ]] && PROJECTS="$@" || PROJECTS=$(ls -d */ | cut -f1 -d'/')
 for p in $PROJECTS; do
     printf "======== %5s ========\n" $p
     pushd $p
