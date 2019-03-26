@@ -1,7 +1,7 @@
 // Inject utilities to CQWebSocket
 
 import _ from 'lodash'
-import request from 'request'
+import request from 'request-promise-native'
 import NodeCache from 'node-cache'
 
 const cache = new NodeCache({
@@ -25,17 +25,20 @@ async function _refreshGroupMember(group_id) {
   }
   cache.set(`GroupMember:${group_id}`, members)
 }
-async function isGroupAdmin(group_id, user_id) {
+async function getGroupMember(group_id, user_id) {
   await this._refreshGroupMember(group_id)
   const members = cache.get(`GroupMember:${group_id}`)
-  const role = _.get(members, [user_id, 'role'])
-  return ['owner', 'admin'].includes(role)
+  console.log(_.get(members, user_id))
+  return _.get(members, user_id)
 }
 async function getGroupMemberName(group_id, user_id) {
-  await this._refreshGroupMember(group_id)
-  const members = cache.get(`GroupMember:${group_id}`)
-  const user = _.get(members, [user_id])
+  const user = await this.getGroupMember(group_id, user_id) || {}
   return user.card || user.nickname || user.user_id
+}
+async function isGroupAdmin(group_id, user_id) {
+  const user = await this.getGroupMember(group_id, user_id) || {}
+  const role = _.get(user, 'role')
+  return ['owner', 'admin'].includes(role)
 }
 
 async function _refreshGroupLevelName(group_id) {
@@ -44,7 +47,7 @@ async function _refreshGroupLevelName(group_id) {
 
   const credresp = await this('get_credentials')
   const { cookies, csrf_token } = credresp.data
-  const levelraw = await request.post({
+  const rawdata = await request.post({
     url: 'https://qinfo.clt.qq.com/cgi-bin/qun_info/get_group_level_info',
     headers: {
       'Referer': 'https://qinfo.clt.qq.com/qlevel/setting.html',
@@ -56,27 +59,30 @@ async function _refreshGroupLevelName(group_id) {
       bkn: csrf_token,
     },
   })
-  const leveldata = JSON.parse(levelraw)
-  const levelname = {}
+  const leveldata = JSON.parse(rawdata)
+  const nlmap = {}
   for (let [ level, name ] of Object.entries(leveldata.levelname)) {
-    level = level.replace('lvln', '')
-    levelname[level] = name
+    nlmap[name] = level.replace('lvln', '')
   }
-  cache.set(`GroupLevelName:${group_id}`, levelname)
+  cache.set(`GroupLevelName:${group_id}`, nlmap)
 }
-async function getGroupLevelName(group_id) {
+
+async function getGroupMemberLevel(group_id, user_id) {
   await this._refreshGroupLevelName(group_id)
-  return cache.get(`GroupLevelName:${group_id}`)
+  const user = await this.getGroupMember(group_id, user_id) || {}
+  const nlmap = cache.get(`GroupLevelName:${group_id}`)
+  return nlmap[user['level']] || -1
 }
 
 
 export function injectCQWS(CQWebSocket) {
   Object.assign(CQWebSocket.prototype, {
     _refreshGroupMember,
-    isGroupAdmin,
+    getGroupMember,
     getGroupMemberName,
+    isGroupAdmin,
     _refreshGroupLevelName,
-    getGroupLevelName,
+    getGroupMemberLevel,
   })
   return CQWebSocket
 }

@@ -6,6 +6,7 @@ import BaseSkill from './base'
 export default class BanTrap extends BaseSkill {
   static Name    = '禁言陷阱'
   static Aliases = [ '大字爆' ]
+  static RequiredLevel = 4
   static Options = [
     { name: 'duration', type: Number, default: 1 },   // x 10 minutes
   ]
@@ -18,21 +19,17 @@ export default class BanTrap extends BaseSkill {
 
   create = async () => {
     this.active = true
-    if (await QQ.isGroupAdmin(this.group_id, this.caster_id)) {
-      // QQ('set_group_ban_rate_limited', {
-      //   group_id: this.group_id,
-      //   user_id : this.caster_id,
-      //   duration: this.duration * 10 * 60,
-      // })
-      QQ('send_group_msg_rate_limited', {
-        group_id: this.group_id,
-        message : `${new CQAt(this.caster_id)} 释放了大字爆，请小心行走`,
-      })
-      this.dies = new RandomQueue(
-        Array(this.msgCount).fill(0).map((_,i) => i < this.banCount), 1, false)
-    }
-    else
-      await this.destory()
+    QQ('set_group_ban_rate_limited', {
+      group_id: this.group_id,
+      user_id : this.caster_id,
+      duration: this.duration * 10 * 60,
+    })
+    QQ('send_group_msg_rate_limited', {
+      group_id: this.group_id,
+      message : `${new CQAt(this.caster_id)} 释放了大字爆，请小心行走`,
+    })
+    this.dies = new RandomQueue(
+      Array(this.msgCount).fill(0).map((_,i) => i < this.banCount), 1, false)
   }
 
   handleMsg = async (ctx, tags) => {

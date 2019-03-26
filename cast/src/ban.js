@@ -5,6 +5,7 @@ import BaseSkill from './base'
 export default class BanUser extends BaseSkill {
   static Name    = '禁言术'
   static Aliases = [ '火球术' ]
+  static RequiredLevel = 5
   static Options = [
     { name: 'target'  , type: CQAt },
     { name: 'duration', type: Number, default: 1 },   // hours
@@ -17,8 +18,7 @@ export default class BanUser extends BaseSkill {
 
   create = async () => {
     this.active = true
-    if (await QQ.isGroupAdmin(this.group_id, this.caster_id) &&
-        !await QQ.isGroupAdmin(this.group_id, this.target_id)) {
+    if (!await QQ.isGroupAdmin(this.group_id, this.target_id)) {
       QQ('set_group_ban', {
         group_id: this.group_id,
         user_id : this.target_id,

@@ -4,6 +4,7 @@ import { parse as parseCQTags, CQAt } from 'cq-websocket'
 export default class BaseSkill {
   static Name    = ''
   static Aliases = []
+  static RequiredLevel = 5  // 0~5
   static Options = [
     // { name: 'target', type: CQAt },
     // { name: 'duration', type: Number, default: 60 },
