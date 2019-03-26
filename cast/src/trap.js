@@ -4,7 +4,7 @@ import BaseSkill from './base'
 /* global QQ */
 
 export default class BanTrap extends BaseSkill {
-  static Name    = '禁言陷阱'
+  static Name    = '自爆'
   static Aliases = [ '大字爆' ]
   static RequiredLevel = 4
   static Options = [

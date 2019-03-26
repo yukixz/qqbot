@@ -3,8 +3,8 @@ import BaseSkill from './base'
 /* global QQ */
 
 export default class BanUser extends BaseSkill {
-  static Name    = '禁言术'
-  static Aliases = [ '火球术' ]
+  static Name    = '炎爆术'
+  static Aliases = [ '大火球' ]
   static RequiredLevel = 5
   static Options = [
     { name: 'target'  , type: CQAt },
