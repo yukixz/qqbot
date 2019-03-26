@@ -36,6 +36,8 @@ QQ.on('message.group', async (e, ctx, ...args) => {
     return
   if (! PoiGroups.includes(group_id))
     return
+  if (user_id === 1000000)
+    return
   console.log(`message.group ${ctx.group_id} ${ctx.user_id} ${ctx.message}`)
 
   // const g = await getStore(group_id, {
@@ -52,8 +54,8 @@ QQ.on('message.group', async (e, ctx, ...args) => {
     const [ _, name, ...castArgs ] = parts
     const Skill = SkillMap[name]
     if (Skill != null &&
-        (user_lv >= Skill.RequiredLevel || QQ.isGroupAdmin(group_id, user_id))) {
-      console.log(`CAST group:${group_id} caster:${user_id} level:${user_lv} skill:${name}`)
+        (user_lv >= Skill.RequiredLevel || await QQ.isGroupAdmin(group_id, user_id))) {
+      console.log(`CAST group:${group_id} caster:${user_id} level:${user_lv} skill:${name} skilllevel:${Skill.RequiredLevel}`)
       const skill = new Skill(castArgs, ctx)
       await skill.create()
       r.skills.push(skill)

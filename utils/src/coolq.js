@@ -28,7 +28,6 @@ async function _refreshGroupMember(group_id) {
 async function getGroupMember(group_id, user_id) {
   await this._refreshGroupMember(group_id)
   const members = cache.get(`GroupMember:${group_id}`)
-  console.log(_.get(members, user_id))
   return _.get(members, user_id)
 }
 async function getGroupMemberName(group_id, user_id) {
