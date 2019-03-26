@@ -13,10 +13,13 @@ export default class BaseSkill {
     this.group_id  = ctx.group_id
     this.caster_id = ctx.user_id
     this._parseOptions(args)
+  }
+
+  create = async () => {
     this.active = true
   }
 
-  destory() {
+  destory = async () => {
     this.active = false
   }
 

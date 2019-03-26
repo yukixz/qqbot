@@ -50,8 +50,11 @@ QQ.on('message.group', async (e, ctx, ...args) => {
   if (parts[0] === '/cast') {
     const [ _, name, ...castArgs ] = parts
     const Skill = SkillMap[name]
-    const skill = new Skill(castArgs, ctx)
-    r.skills.push(skill)
+    if (Skill != null) {
+      const skill = new Skill(castArgs, ctx)
+      await skill.create()
+      r.skills.push(skill)
+    }
   }
   // Handle active skills
   else {
@@ -62,6 +65,12 @@ QQ.on('message.group', async (e, ctx, ...args) => {
   }
   // Clean inactive skill
   r.skills = r.skills.filter(s => s.active)
+  console.log(r.skills.map(s => {
+    if (s instanceof BanUser)
+      return `BanUser group:${s.group_id} caster:${s.caster_id} duration:${s.duration} target:${s.target_id}`
+    if (s instanceof BanTrap)
+      return `BanTrap group:${s.group_id} caster:${s.caster_id} duration:${s.duration} dies:${s.dies.queue}`
+  }))
 
   runtimes[group_id] = r
   await putStore(group_id, g)

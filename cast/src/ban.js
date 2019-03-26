@@ -10,13 +10,13 @@ export default class BanUser extends BaseSkill {
     { name: 'duration', type: Number, default: 1 },   // hours
   ]
 
-  constructor(args, ctx) {
-    super(args, ctx)
+  constructor(...args) {
+    super(...args)
     this.target_id = this.target.qq
-    this.ban()
   }
 
-  ban = async () => {
+  create = async () => {
+    this.active = true
     if (await QQ.isGroupAdmin(this.group_id, this.caster_id) &&
         !await QQ.isGroupAdmin(this.group_id, this.target_id)) {
       QQ('set_group_ban', {
@@ -25,6 +25,6 @@ export default class BanUser extends BaseSkill {
         duration: this.duration * 60 * 60,
       })
     }
-    this.destory()
+    await this.destory()
   }
 }
