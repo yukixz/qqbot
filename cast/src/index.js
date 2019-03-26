@@ -22,8 +22,9 @@ for (const [k, v] of [['QQ', QQ]]) {
   })
 }
 
+const Skills = [ BanUser, BanTrap ]
 const SkillMap = {}
-for (const Skill of [ BanUser, BanTrap ]) {
+for (const Skill of Skills) {
   for (const name of [Skill.Name, ...Skill.Aliases]) {
     SkillMap[name] = Skill
   }
@@ -45,11 +46,20 @@ QQ.on('message.group', async (e, ctx, ...args) => {
   // })
   const r = runtimes[group_id] || {
     skills: [],
+    list_sleep: 0,
   }
   const user_lv = await QQ.getGroupMemberLevel(group_id, user_id)
-
-  // Cast new skill
   const parts = textsplit(message)
+
+  // Query all skills
+  if (message === '/skill' && Date.now() >= r.list_sleep + 5*60*1000) {
+    r.list_sleep = Date.now()
+    return [
+      '可用技能',
+      ...Skills.map(s => `${s.Name} Lv.${s.RequiredLevel}`),
+    ].join('\n')
+  }
+  // Cast new skill
   if (parts[0] === '/cast') {
     const [ _, name, ...castArgs ] = parts
     const Skill = SkillMap[name]
