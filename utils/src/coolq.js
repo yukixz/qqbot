@@ -54,7 +54,7 @@ async function _refreshGroupLevelName(group_id) {
       'Cookie': cookies,
     },
     form: {
-      gc : 208372001,
+      gc : group_id,
       bkn: csrf_token,
     },
   })
