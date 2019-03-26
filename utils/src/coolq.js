@@ -71,12 +71,12 @@ async function getGroupLevelName(group_id) {
 
 
 export function injectCQWS(CQWebSocket) {
-  CQWebSocket.prototype.isGroupAdmin       = isGroupAdmin
-  CQWebSocket.prototype.getGroupMemberName = getGroupMemberName
-  CQWebSocket.prototype.hacks = {
+  Object.assign(CQWebSocket.prototype, {
+    _refreshGroupMember,
     isGroupAdmin,
     getGroupMemberName,
+    _refreshGroupLevelName,
     getGroupLevelName,
-  }
+  })
   return CQWebSocket
 }

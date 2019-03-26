@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 export function textsplit(text) {
-  return text.split(/\s+/)
+  return text.split(/\s+/).filter(s => s.length > 0)
 }
 
 export function textmatch(text, keywords) {
