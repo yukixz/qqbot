@@ -29,7 +29,7 @@ for (const Skill of [ BanUser ]) {
 }
 
 const runtimes = []
-QQ.on('message.group', async (e, ctx) => {
+QQ.on('message.group', async (e, ctx, ...args) => {
   const { user_id, group_id, message } = ctx
   if (IgnoreUsers.includes(user_id))
     return
@@ -47,16 +47,16 @@ QQ.on('message.group', async (e, ctx) => {
   // Cast new skill
   const parts = textsplit(message)
   if (parts[0] === '/cast') {
-    const [ _, name, ...args ] = parts
+    const [ _, name, ...castArgs ] = parts
     const Skill = SkillMap[name]
-    const skill = new Skill(args, ctx)
+    const skill = new Skill(castArgs, ctx)
     r.skills.push(skill)
   }
   // Handle active skills
   else {
     for (const s of r.skills) {
       if (s.active && s.handleMsg != null)
-        s.handleMsg(message)
+        await s.handleMsg(ctx, args)
     }
   }
   // Clean inactive skill
