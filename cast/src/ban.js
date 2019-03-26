@@ -12,8 +12,6 @@ export default class BanUser extends BaseSkill {
 
   constructor(args, ctx) {
     super(args)
-    this.active = false
-
     this.target_id = this.target.qq
     this.ban()
   }
@@ -27,5 +25,6 @@ export default class BanUser extends BaseSkill {
         duration: this.duration * 60 * 60,
       })
     }
+    this.destory()
   }
 }

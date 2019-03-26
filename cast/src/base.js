@@ -12,11 +12,15 @@ export default class BaseSkill {
   constructor(args, ctx) {
     this.group_id  = ctx.group_id
     this.caster_id = ctx.user_id
-    this.parseOptions(args)
+    this._parseOptions(args)
     this.active = true
   }
 
-  parseOptions(args) {
+  destory() {
+    this.active = false
+  }
+
+  _parseOptions(args) {
     for (const [Opt, arg] of _.zip(this.constructor.Options, args)) {
       if (Opt == null)
         break
