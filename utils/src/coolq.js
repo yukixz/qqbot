@@ -47,7 +47,7 @@ async function _refreshGroupLevelName(group_id) {
   const levelraw = await request.post({
     url: 'https://qinfo.clt.qq.com/cgi-bin/qun_info/get_group_level_info',
     headers: {
-      'Referer': 'https://qun.qq.com/member.html',
+      'Referer': 'https://qinfo.clt.qq.com/qlevel/setting.html',
       'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 QQ/7.9.9.445 V1_IPH_SQ_7.9.9_1_APP_A Pixel/1125 Core/UIWebView Device/Apple(iPhone XS) NetType/WIFI QBWebViewType/1',
       'Cookie': cookies,
     },
