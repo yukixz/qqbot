@@ -9,10 +9,11 @@ export default class BaseSkill {
     // { name: 'duration', type: Number, default: 60 },
   ]
 
-  active = true
-
   constructor(args, ctx) {
+    this.group_id  = ctx.group_id
+    this.caster_id = ctx.user_id
     this.parseOptions(args)
+    this.active = true
   }
 
   parseOptions(args) {

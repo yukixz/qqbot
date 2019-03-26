@@ -54,9 +54,9 @@ QQ.on('message.group', async (e, ctx) => {
   }
   // Handle active skills
   else {
-    for (const skill of r.skills) {
-      if (skill.handleMsg != null)
-        skill.handleMsg(message)
+    for (const s of r.skills) {
+      if (s.active && s.handleMsg != null)
+        s.handleMsg(message)
     }
   }
   // Clean inactive skill
