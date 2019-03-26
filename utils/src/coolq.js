@@ -40,16 +40,16 @@ async function isGroupAdmin(group_id, user_id) {
   return ['owner', 'admin'].includes(role)
 }
 
-async function _refreshGroupLevelName(group_id) {
+async function _refreshAPIGetGroupMembers(group_id) {
   if (group_id == null)  return false
-  if (cache.getTtl(`GroupLevelName:${group_id}`) != null)  return true
+  if (cache.getTtl(`API:get_group_members:${group_id}`) != null)  return true
 
   const credresp = await this('get_credentials')
   const { cookies, csrf_token } = credresp.data
   const rawdata = await request.post({
-    url: 'https://qinfo.clt.qq.com/cgi-bin/qun_info/get_group_level_info',
+    url: 'https://qinfo.clt.qq.com/cgi-bin/qun_info/get_group_members',
     headers: {
-      'Referer': 'https://qinfo.clt.qq.com/qlevel/setting.html',
+      'Referer': 'https://qinfo.clt.qq.com/',
       'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 QQ/7.9.9.445 V1_IPH_SQ_7.9.9_1_APP_A Pixel/1125 Core/UIWebView Device/Apple(iPhone XS) NetType/WIFI QBWebViewType/1',
       'Cookie': cookies,
     },
@@ -58,19 +58,38 @@ async function _refreshGroupLevelName(group_id) {
       bkn: csrf_token,
     },
   })
-  const leveldata = JSON.parse(rawdata)
+  const data = JSON.parse(rawdata)
+  cache.set(`API:get_group_members:${group_id}`, data)
+}
+async function _refreshGroupLevelName(group_id) {
+  if (group_id == null)  return false
+  if (cache.getTtl(`GroupLevelName:${group_id}`) != null)  return true
+
+  await this._refreshAPIGetGroupMembers(group_id)
+  const { levelname } = cache.get(`API:get_group_members:${group_id}`)
   const nlmap = {}
-  for (let [ level, name ] of Object.entries(leveldata.levelname)) {
+  for (let [ level, name ] of Object.entries(levelname)) {
     nlmap[name] = level.replace('lvln', '')
   }
   cache.set(`GroupLevelName:${group_id}`, nlmap)
 }
+async function _refreshGroupMemberLevel(group_id) {
+  if (group_id == null)  return false
+  if (cache.getTtl(`GroupMemberLevel:${group_id}`) != null)  return true
+
+  await this._refreshAPIGetGroupMembers(group_id)
+  const { lv: userlvs } = cache.get(`API:get_group_members:${group_id}`)
+  const members = {}
+  for (const [ uid, info ] of Object.entries(userlvs)) {
+    members[uid] = info.l
+  }
+  cache.set(`GroupMemberLevel:${group_id}`, members)
+}
 
 async function getGroupMemberLevel(group_id, user_id) {
-  await this._refreshGroupLevelName(group_id)
-  const user = await this.getGroupMember(group_id, user_id) || {}
-  const nlmap = cache.get(`GroupLevelName:${group_id}`)
-  return nlmap[user['level']] || -1
+  await this._refreshGroupMemberLevel(group_id)
+  const ulvs = cache.get(`GroupMemberLevel:${group_id}`)
+  return ulvs[user_id]
 }
 
 
@@ -80,8 +99,15 @@ export function injectCQWS(CQWebSocket) {
     getGroupMember,
     getGroupMemberName,
     isGroupAdmin,
+    _refreshAPIGetGroupMembers,
     _refreshGroupLevelName,
+    _refreshGroupMemberLevel,
     getGroupMemberLevel,
   })
   return CQWebSocket
 }
+
+
+/****
+ * http://qinfo.clt.qq.com/cgi-bin/qun_info/get_group_shutup?bkn=111111&gc=208372001
+ ****/
