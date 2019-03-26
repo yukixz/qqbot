@@ -19,20 +19,4 @@ QQ.on('socket.error', console.error)
   })
   .on('message.private', async (e, ctx) => {
     console.log(ctx)
-    return ctx.message
-    // 以下提供三種方式將原訊息以原路送回
-    // switch (Date.now() % 3) {
-    // case 0:
-    //   // 1. 調用 CoolQ HTTP API 之 send_msg 方法
-    //   bot('send_msg', ctx)
-    //   break
-    // case 1:
-    //   // 2. 或者透過返回值快速響應
-    //   return ctx.message
-    // case 2:
-    //   // 3. 或者透過CQEvent實例，先獲取事件處理權再設置響應訊息
-    //   e.stopPropagation()
-    //   e.setMessage(ctx.message)
-    //   break
-    // }
   })
