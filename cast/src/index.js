@@ -4,6 +4,7 @@ import { IgnoreUsers, PoiGroups } from '@qqbot/utils'
 import { textsplit } from '@qqbot/utils'
 import { initStore, getStore, putStore } from './store'
 import BanUser from './ban'
+import BanTrap from './trap'
 
 initStore('./db')
 injectCQWS(CQWebSocket)
@@ -22,7 +23,7 @@ for (const [k, v] of [['QQ', QQ]]) {
 }
 
 const SkillMap = {}
-for (const Skill of [ BanUser ]) {
+for (const Skill of [ BanUser, BanTrap ]) {
   for (const name of [Skill.Name, ...Skill.Aliases]) {
     SkillMap[name] = Skill
   }
@@ -60,8 +61,8 @@ QQ.on('message.group', async (e, ctx, ...args) => {
     }
   }
   // Clean inactive skill
-  console.log(r)
   r.skills = r.skills.filter(s => s.active)
 
+  runtimes[group_id] = r
   await putStore(group_id, g)
 })

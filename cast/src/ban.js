@@ -4,14 +4,14 @@ import BaseSkill from './base'
 
 export default class BanUser extends BaseSkill {
   static Name    = '禁言术'
-  static Aliases = [ '禁言' ]
+  static Aliases = [ '火球术' ]
   static Options = [
     { name: 'target'  , type: CQAt },
     { name: 'duration', type: Number, default: 1 },   // hours
   ]
 
   constructor(args, ctx) {
-    super(args)
+    super(args, ctx)
     this.target_id = this.target.qq
     this.ban()
   }

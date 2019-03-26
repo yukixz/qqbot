@@ -32,7 +32,7 @@ export default class BaseSkill {
       }
       if (arg != null) {
         if (Opt.type === Number) {
-          const val = parseInt(arg)
+          const val = parseInt(arg != null ? arg : Opt.default)
           if (! isNaN(val))
             this[Opt.name] = val
           else
