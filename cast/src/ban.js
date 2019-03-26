@@ -17,7 +17,7 @@ export default class BanUser extends BaseSkill {
     this.group_id  = ctx.group_id
     this.user_id   = ctx.user_id
     this.target_id = this.target.qq
-    setTimeout(this.ban, 0)
+    this.ban()
   }
 
   ban = async () => {
