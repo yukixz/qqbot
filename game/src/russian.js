@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { CQAt } from 'cq-websocket'
+import { CQAt, CQImage } from 'cq-websocket'
 import { choice } from '@qqbot/utils'
 /* global QQ */
 
@@ -39,6 +39,10 @@ export default class RussianRoulette {
       [ "地扣动了扳机，" ],
       [ "然而——什么都没有发生", "围观群众发出了失望的叹息" ],
     ]),
+  ]
+  FullBulletImages = [
+    'https://raw.githubusercontent.com/yukixz/qqbot/master/game/img/4d3c4bafdaacc53f4e11bac1e93f9d3f.jpg',
+    'https://raw.githubusercontent.com/yukixz/qqbot/master/game/img/51a083fd6c588a16027bc924afb44ad1.jpg',
   ]
 
   constructor() {
@@ -140,9 +144,11 @@ export default class RussianRoulette {
   reload = async () => {
     if (this.revolver.length === 0) {
       const slot   = 6
-      const bullet = _.random(2, 4)
+      const bullet = choice([2, 2, 3, 3, 4, 4, 5, 6])
       this.revolver = _.shuffle(Array(slot).fill(false).fill(true, 0, bullet))
       this.msgs.push(`弹匣为空，重新上膛（${bullet}/${slot}）`)
+      if (bullet === slot)
+        this.msgs.push(new CQImage(choice(this.FullBulletImages)))
     }
   }
   next = async (isStart=false) => {
@@ -183,10 +189,8 @@ export default class RussianRoulette {
     if (this.revolver.pop()) {
       player.isAlive = false
       await this.setQQBan(player.qq, this.DeadMinutes)
-      // this.msgs.push(`${choice(["砰！一声枪声响起", "枪口冒出火舌"])}，${new CQAt(player.qq)}倒在了${choice(["血泊中", "吃瓜群众的怀中", "赌桌上"])}。`)
       this.msgs.push(choice(this.FireDieMessages).replace('{at}', new CQAt(player.qq)))
     } else {
-      // this.msgs.push(`${new CQAt(user)}${choice(["颤颤巍巍", "毫不犹豫", "一脸赴死", "一脸懵逼", "毫无茫然", "生无可恋"])}地把扣动扳机，然而什么都没有发生。`)
       this.msgs.push(choice(this.FireSafeMessages).replace('{at}', new CQAt(player.qq)))
     }
 
