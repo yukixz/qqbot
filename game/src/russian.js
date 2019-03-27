@@ -41,8 +41,8 @@ export default class RussianRoulette {
     ]),
   ]
   FullBulletImages = [
-    'https://raw.githubusercontent.com/yukixz/qqbot/master/game/img/4d3c4bafdaacc53f4e11bac1e93f9d3f.jpg',
-    'https://raw.githubusercontent.com/yukixz/qqbot/master/game/img/51a083fd6c588a16027bc924afb44ad1.jpg',
+    'https://raw.githubusercontent.com/yukixz/qqbot/master/game/img/3e20b9592e5f6409e3e57b366a252ec7.jpg',
+    'https://raw.githubusercontent.com/yukixz/qqbot/master/game/img/5c3972ef4b5fc782d40e53a1f7a8080e.jpg',
   ]
 
   constructor() {
