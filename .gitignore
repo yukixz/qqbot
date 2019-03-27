@@ -87,4 +87,4 @@ typings/
 # Compiled deployment code
 /*/app/
 # Filled deployment config.js
-/utils/src/config.js
+/*/src/config.js
