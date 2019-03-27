@@ -1,22 +1,28 @@
 import { CQWebSocket } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
+import { IgnoreUsers } from '@qqbot/utils'
 
 injectCQWS(CQWebSocket)
 const QQ = new CQWebSocket({
   host: CQHTTP_WS_HOST,
   port: CQHTTP_WS_PORT,
 })
-QQ.on('socket.error', console.error)
-  .on('socket.connecting', (wsType) => console.log(`[${wsType}] Connecting...`))
-  .on('socket.connect', (wsType, _, attempts) => console.log(`[${wsType}] Connected in ${attempts} attempts`))
-  .on('socket.failed', (wsType, attempts) => console.log(`[${wsType}] Connect failed on ${attempts} attempts`))
-  .on('socket.close', (wsType, code, desc) => console.log(`[${wsType}] Connect close: ${code} ${desc}`))
-  .on('ready', () => console.log(`QQBot ready`))
-  .on('api.response', (resObj) => console.log('Response: %O', resObj))
-  .connect()
-  .on('message.group', (e, ctx) => {
-    console.log(ctx)
+QQ.on('ready', () => console.log(`QQBot ready`)).connect()
+
+// Export constants to global scope
+for (const [k, v] of [['QQ', QQ]]) {
+  Object.defineProperty(global, k, {
+    get: () => { return v },
+    set: () => { throw TypeError('Assignment to constant variable.') },
   })
-  .on('message.private', async (e, ctx) => {
-    console.log(ctx)
-  })
+}
+
+QQ.on('message.group', async (e, ctx, ...args) => {
+  if (IgnoreUsers.includes(ctx.user_id))
+    return
+  console.log(`message.group ${ctx.group_id} ${ctx.user_id} ${ctx.message}`)
+
+  console.log('======== ========')
+  console.log(ctx)
+  console.log(tags)
+})
