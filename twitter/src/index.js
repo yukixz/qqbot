@@ -77,6 +77,7 @@ async function broadcast() {
 
     const notify = Notifies[screen_name]
     const message = [name, date, '', text].join('\n')
+    console.log(message)
     if (notify == null)  continue
     for (const group_id of notify.groups) {
       QQ('send_group_msg_rate_limited', { group_id, message })

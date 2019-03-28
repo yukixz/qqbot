@@ -24,5 +24,5 @@ QQ.on('message.group', async (e, ctx, ...args) => {
 
   console.log('======== ========')
   console.log(ctx)
-  console.log(tags)
+  console.log(args)
 })
