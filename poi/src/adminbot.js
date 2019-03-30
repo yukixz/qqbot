@@ -8,8 +8,6 @@ const BanMaxDuration     = 16 * 60  // Minutes
 const BanResetDuration   = 16 * 60 * 60 * 1000  // Milliseconds
 const BanRedPacketMultiplier = 60
 const IgnoredWords = [
-  "傻",
-  "笨",
   "蠢",
   "白痴",
   "智障",

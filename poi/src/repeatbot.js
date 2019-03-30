@@ -3,7 +3,7 @@ import { IgnoreUsers } from '@qqbot/utils'
 
 export default class RepeatBot {
   QueueSize = 20
-  RepeatMinLen = 6
+  RepeatMinLen = 5
   RepeatMinCount = 3
   RepeatMaxCount = 5
 
@@ -32,8 +32,11 @@ export default class RepeatBot {
       this.queue.pop()
 
     // Repeat message
-    if (!msg.repeated && msg.count >= this.RepeatMinCount &&
-        _.random(this.RepeatMaxCount - this.count) <= 0) {
+    let shouldRepeat = !msg.repeated && (
+      (msg.count >= this.RepeatMinCount && _.random(this.RepeatMaxCount - this.count) <= 0) ||
+      (message.match(/^(.+?)\1大笨蛋$/) != null || message.match(/^.{2}大笨蛋$/))
+    )
+    if (shouldRepeat) {
       msg.repeated = true
       if (msg.text.length >= this.RepeatMinLen) {
         return message
