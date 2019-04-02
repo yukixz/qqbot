@@ -18,7 +18,7 @@ export default class BanUser extends BaseSkill {
     this.target_id = this.target.qq
   }
 
-  create = async () => {
+  spell = async () => {
     this.active = true
     if (!await QQ.isGroupAdmin(this.group_id, this.target_id)) {
       QQ('set_group_ban', {

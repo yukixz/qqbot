@@ -18,7 +18,7 @@ export default class BaseSkill {
     this._parseOptions(args)
   }
 
-  create = async () => {
+  spell = async () => {
     this.active = true
   }
 

@@ -1,4 +1,4 @@
-import { CQWebSocket } from 'cq-websocket'
+import { CQWebSocket, CQAt } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
 import { IgnoreUsers, PoiGroups } from '@qqbot/utils'
 import { textsplit } from '@qqbot/utils'
@@ -41,52 +41,74 @@ QQ.on('message.group', async (e, ctx, ...args) => {
     return
   console.log(`message.group ${ctx.group_id} ${ctx.user_id} ${ctx.message}`)
 
-  // const g = await getStore(group_id, {
-  //   group_id: group_id,
-  // })
   const r = runtimes[group_id] || {
     skills: [],
     list_sleep: 0,
   }
+  const g = await getStore(group_id, {
+    group_id: group_id,
+    users: {},
+  })
+  const u = g.users[user_id] || {
+    skills: {},
+  }
   const user_lv = await QQ.getGroupMemberLevel(group_id, user_id)
-  const parts = textsplit(message)
 
   // Query all skills
-  if (message === '/skill' && Date.now() >= r.list_sleep + 5*60*1000) {
-    r.list_sleep = Date.now()
-    return [
-      '可用技能',
-      ...Skills.map(s => `${s.Name} Lv.${s.RequiredLevel}`),
-    ].join('\n')
-  }
+  // if (message === '/skill' && Date.now() >= r.list_sleep + 5*60*1000) {
+  //   r.list_sleep = Date.now()
+  //   return [
+  //     '可用技能',
+  //     ...Skills.map(s => `${s.Name} Lv.${s.RequiredLevel}`),
+  //   ].join('\n')
+  // }
+
   // Cast new skill
-  if (parts[0] === '/cast') {
-    const [ _, name, ...castArgs ] = parts
-    const Skill = SkillMap[name]
-    if (Skill != null &&
-        (user_lv >= Skill.RequiredLevel || await QQ.isGroupAdmin(group_id, user_id))) {
-      console.log(`CAST group:${group_id} caster:${user_id} level:${user_lv} skill:${name} skilllevel:${Skill.RequiredLevel}`)
-      const skill = new Skill(castArgs, ctx)
-      await skill.create()
-      r.skills.push(skill)
+  let is_cast = false
+  const [ cast_cmd, cast_name, ...cast_args ] = textsplit(message)
+  if (cast_cmd === '/cast' && SkillMap[cast_name] != null) {
+    const nowts = Date.now()
+    const Skill = SkillMap[cast_name]
+    const user_skill = u.skills[Skill.name] || {
+      cdts: 0,
     }
+    const admin = await QQ.isGroupAdmin(group_id, user_id)
+    if (!admin && user_lv < Skill.RequiredLevel)
+      return `${new CQAt(user_id)}\n【${cast_name}】需要群活跃等级Lv.${Skill.RequiredLevel}`
+    if (!admin && user_skill.cdts > nowts) {
+      const rt = new Date(user_skill.cdts - nowts)
+      return `${new CQAt(user_id)}\n【${cast_name}】冷却中，还有${rt.toISOString().substr(11,8)}`
+    }
+
+    console.log(`CAST group:${group_id} caster:${user_id} level:${user_lv} skill:${cast_name}`)
+    is_cast = true
+    user_skill.cdts = nowts + Skill.Cooldown *60*1000
+    const skill = new Skill(cast_args, ctx)
+    await skill.spell()
+
+    r.skills.push(skill)
+    u.skills[Skill.name] = user_skill
   }
+
   // Handle active skills
-  else {
+  if (! is_cast) {
     for (const s of r.skills) {
       if (s.active && s.handleMsg != null)
         await s.handleMsg(ctx, args)
     }
   }
+
   // Clean inactive skill
   r.skills = r.skills.filter(s => s.active)
-  console.log(r.skills.map(s => {
-    if (s instanceof BanUser)
-      return `BanUser group:${s.group_id} caster:${s.caster_id} duration:${s.duration} target:${s.target_id}`
-    if (s instanceof BanTrap)
-      return `BanTrap group:${s.group_id} caster:${s.caster_id} duration:${s.duration} dies:${s.dies.queue}`
-  }))
+  if (r.skills.length > 0)
+    console.log(r.skills.map(s => {
+      if (s instanceof BanUser)
+        return `BanUser group:${s.group_id} caster:${s.caster_id} duration:${s.duration} target:${s.target_id}`
+      if (s instanceof BanTrap)
+        return `BanTrap group:${s.group_id} caster:${s.caster_id} duration:${s.duration} dies:${s.dies.queue}`
+    }))
 
   runtimes[group_id] = r
-  // await putStore(group_id, g)
+  g.users[user_id] = u
+  await putStore(group_id, g)
 })

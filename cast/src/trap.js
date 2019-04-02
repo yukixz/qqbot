@@ -19,7 +19,7 @@ export default class BanTrap extends BaseSkill {
     this.banCount = 1
   }
 
-  create = async () => {
+  spell = async () => {
     this.active = true
     QQ('set_group_ban_rate_limited', {
       group_id: this.group_id,
