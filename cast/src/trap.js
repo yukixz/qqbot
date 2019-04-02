@@ -7,6 +7,8 @@ export default class BanTrap extends BaseSkill {
   static Name    = '自爆'
   static Aliases = [ '大字爆' ]
   static RequiredLevel = 4
+  static RequiredMana  = 5
+  static Cooldown      = 12 * 60
   static Options = [
     { name: 'duration', type: Number, default: 1 },   // x 10 minutes
   ]
