@@ -17,12 +17,14 @@ for (const [k, v] of [['QQ', QQ]]) {
   })
 }
 
+QQ.on('message.private', async (e, ctx, ...args) => {
+  if (IgnoreUsers.includes(ctx.user_id))
+    return
+  console.log(`message.private ${ctx.user_id} ${ctx.message}`)
+})
+
 QQ.on('message.group', async (e, ctx, ...args) => {
   if (IgnoreUsers.includes(ctx.user_id))
     return
   console.log(`message.group ${ctx.group_id} ${ctx.user_id} ${ctx.message}`)
-
-  console.log('======== ========')
-  console.log(ctx)
-  console.log(args)
 })
