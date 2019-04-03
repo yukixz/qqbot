@@ -70,19 +70,19 @@ QQ.on('message.group', async (e, ctx, ...args) => {
     const nowts = Date.now()
     const Skill = SkillMap[cast_name]
     const user_skill = u.skills[Skill.name] || {
-      cdts: 0,
+      castts: 0,
     }
     const admin = await QQ.isGroupAdmin(group_id, user_id)
     if (!admin && user_lv < Skill.RequiredLevel)
-      return `${new CQAt(user_id)}\n【${cast_name}】需要群活跃等级Lv.${Skill.RequiredLevel}`
-    if (!admin && user_skill.cdts > nowts) {
-      const rt = new Date(user_skill.cdts - nowts)
+      return `${new CQAt(user_id)}\n【${cast_name}】需要群活跃等级Lv.${Skill.RequiredLevel}，您当前等级Lv.${user_lv}`
+    if (!admin && nowts <= (user_skill.castts + Skill.Cooldown * 60000)) {
+      const rt = new Date(user_skill.castts + Skill.Cooldown * 60000 - nowts)
       return `${new CQAt(user_id)}\n【${cast_name}】冷却中，还有${rt.toISOString().substr(11,8)}`
     }
 
     console.log(`CAST group:${group_id} caster:${user_id} level:${user_lv} skill:${cast_name}`)
     is_cast = true
-    user_skill.cdts = nowts + Skill.Cooldown *60*1000
+    user_skill.castts = nowts
     const skill = new Skill(cast_args, ctx)
     await skill.spell()
 

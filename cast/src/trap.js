@@ -8,14 +8,14 @@ export default class BanTrap extends BaseSkill {
   static Aliases = [ '大字爆' ]
   static RequiredLevel = 4
   static RequiredMana  = 5
-  static Cooldown      = 12 * 60
+  static Cooldown      = 4 * 60
   static Options = [
     { name: 'duration', type: Number, default: 1 },   // x 10 minutes
   ]
 
   constructor(...args) {
     super(...args)
-    this.msgCount = 5
+    this.msgCount = 3
     this.banCount = 1
   }
 
@@ -28,7 +28,7 @@ export default class BanTrap extends BaseSkill {
     })
     QQ('send_group_msg_rate_limited', {
       group_id: this.group_id,
-      message : `${new CQAt(this.caster_id)} 释放了大字爆，请小心行走`,
+      message : `${new CQAt(this.caster_id)} 释放了爆炸陷阱，请注意安全。`,
     })
     this.dies = new RandomQueue(
       Array(this.msgCount).fill(0).map((_,i) => i < this.banCount), 1, false)
