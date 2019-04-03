@@ -66,7 +66,6 @@ QQ.on('message.group', async (e, ctx, ...args) => {
   }
   // Query group member level summary
   if (message === '/cast stat' && Stewards.includes(user_id)) {
-    r.listts = Date.now()
     const ulvs = await QQ.getGroupMemberLevelAll(group_id)
     const lvc = _.countBy(ulvs)
     return [
