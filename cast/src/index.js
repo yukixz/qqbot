@@ -3,6 +3,7 @@ import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
 import { IgnoreUsers, PoiGroups } from '@qqbot/utils'
 import { textsplit } from '@qqbot/utils'
 import { initStore, getStore, putStore } from './store'
+import Amnesty from './amnesty'
 import BanUser from './ban'
 import BanTrap from './trap'
 
@@ -22,7 +23,7 @@ for (const [k, v] of [['QQ', QQ]]) {
   })
 }
 
-const Skills = [ BanUser, BanTrap ]
+const Skills = [ Amnesty, BanUser, BanTrap ]
 const SkillMap = {}
 for (const Skill of Skills) {
   for (const name of [Skill.Name, ...Skill.Aliases]) {

@@ -92,6 +92,29 @@ async function getGroupMemberLevel(group_id, user_id) {
   return ulvs[user_id]
 }
 
+async function getGroupBannedUsers(group_id) {
+  const credresp = await this('get_credentials')
+  const { cookies, csrf_token } = credresp.data
+  const rawdata = await request.post({
+    url: 'https://qinfo.clt.qq.com/cgi-bin/qun_info/get_group_shutup',
+    headers: {
+      'Referer': 'https://qinfo.clt.qq.com/',
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 QQ/7.9.9.445 V1_IPH_SQ_7.9.9_1_APP_A Pixel/1125 Core/UIWebView Device/Apple(iPhone XS) NetType/WIFI QBWebViewType/1',
+      'Cookie': cookies,
+    },
+    form: {
+      gc : group_id,
+      bkn: csrf_token,
+    },
+  })
+  const { shutup_list } = JSON.parse(rawdata)
+  const users = {}
+  for (const { t, uin } of shutup_list) {
+    users[uin] = t
+  }
+  return users
+}
+
 
 export function injectCQWS(CQWebSocket) {
   Object.assign(CQWebSocket.prototype, {
@@ -103,11 +126,7 @@ export function injectCQWS(CQWebSocket) {
     _refreshGroupLevelName,
     _refreshGroupMemberLevel,
     getGroupMemberLevel,
+    getGroupBannedUsers,
   })
   return CQWebSocket
 }
-
-
-/****
- * http://qinfo.clt.qq.com/cgi-bin/qun_info/get_group_shutup?bkn=111111&gc=208372001
- ****/
