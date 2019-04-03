@@ -10,13 +10,14 @@ export default class BanTrap extends BaseSkill {
   static RequiredMana  = 5
   static Cooldown      = 4 * 60
   static Options = [
-    { name: 'duration', type: Number, default: 1 },   // x 10 minutes
+    // { name: 'duration', type: Number, default: 1 },   // x 10 minutes
   ]
 
   constructor(...args) {
     super(...args)
     this.msgCount = 3
     this.banCount = 1
+    this.duration = 1
   }
 
   spell = async () => {
