@@ -16,8 +16,8 @@ export default class RussianRoulette {
   JoinSeconds = 60
   FireSeconds = 30
   DeadMinutes = 10
-  JoinMessages = ["加入", "参加", "join"]
-  FireMessages = ["开火", "开枪", "fire"]
+  JoinMessages = ["加入", "参加", "join", "j"]
+  FireMessages = ["开火", "开枪", "fire", "f"]
 
   FireDieMessages = [
     ...templace([

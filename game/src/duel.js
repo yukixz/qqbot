@@ -13,8 +13,8 @@ export default class Duel {
   ForceSeconds     = 30
   DeadMinutes      = 60
   BulletLimit      = 2
-  JoinMessages = ["加入", "参加", "join"]
-  FireMessages = ["开火", "开枪", "fire"]
+  JoinMessages = ["加入", "参加", "join", "j"]
+  FireMessages = ["开火", "开枪", "fire", "f"]
   // QuitMessages = ["退出", "quit", "leave"]
 
   constructor() {
