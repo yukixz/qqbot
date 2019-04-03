@@ -4,7 +4,7 @@ import BaseSkill from './base'
 
 export default class BanUser extends BaseSkill {
   static Name    = '炎爆术'
-  static Aliases = [ '大火球' ]
+  static Aliases = [ '沉默', '背刺' ]
   static RequiredLevel = 6
   static RequiredMana  = 10
   static Cooldown      = 20 * 60

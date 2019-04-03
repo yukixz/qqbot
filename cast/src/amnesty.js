@@ -19,10 +19,10 @@ export default class Amnesty extends BaseSkill {
     if (! Stewards.includes(this.caster_id))
       return await this.destory()
     this.active = true
-    QQ('send_group_msg_rate_limited', {
-      group_id: this.group_id,
-      message : `奉天承运群主诏曰 今日龙颜大悦 特大赦天下 汝等归家 洗心革面 重新做人 不可再犯 钦此`,
-    })
+    // QQ('send_group_msg_rate_limited', {
+    //   group_id: this.group_id,
+    //   message : `奉天承运群主诏曰 今日龙颜大悦 特大赦天下 汝等归家 洗心革面 重新做人 不可再犯 钦此`,
+    // })
     this.release()
   }
 

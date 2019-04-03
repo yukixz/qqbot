@@ -67,11 +67,11 @@ async function _refreshGroupLevelName(group_id) {
 
   await this._refreshAPIGetGroupMembers(group_id)
   const { levelname } = cache.get(`API:get_group_members:${group_id}`)
-  const nlmap = {}
+  const gln = {}
   for (let [ level, name ] of Object.entries(levelname)) {
-    nlmap[name] = level.replace('lvln', '')
+    gln[name] = level.replace('lvln', '')
   }
-  cache.set(`GroupLevelName:${group_id}`, nlmap)
+  cache.set(`GroupLevelName:${group_id}`, gln)
 }
 async function _refreshGroupMemberLevel(group_id) {
   if (group_id == null)  return false
@@ -79,17 +79,22 @@ async function _refreshGroupMemberLevel(group_id) {
 
   await this._refreshAPIGetGroupMembers(group_id)
   const { lv: userlvs } = cache.get(`API:get_group_members:${group_id}`)
-  const members = {}
+  const ulvs = {}
   for (const [ uid, info ] of Object.entries(userlvs)) {
-    members[uid] = info.l
+    ulvs[uid] = info.l
   }
-  cache.set(`GroupMemberLevel:${group_id}`, members)
+  cache.set(`GroupMemberLevel:${group_id}`, ulvs)
 }
 
 async function getGroupMemberLevel(group_id, user_id) {
   await this._refreshGroupMemberLevel(group_id)
   const ulvs = cache.get(`GroupMemberLevel:${group_id}`)
   return ulvs[user_id]
+}
+async function getGroupMemberLevelAll(group_id) {
+  await this._refreshGroupMemberLevel(group_id)
+  const ulvs = cache.get(`GroupMemberLevel:${group_id}`)
+  return ulvs
 }
 
 async function getGroupBannedUsers(group_id) {
@@ -126,6 +131,7 @@ export function injectCQWS(CQWebSocket) {
     _refreshGroupLevelName,
     _refreshGroupMemberLevel,
     getGroupMemberLevel,
+    getGroupMemberLevelAll,
     getGroupBannedUsers,
   })
   return CQWebSocket

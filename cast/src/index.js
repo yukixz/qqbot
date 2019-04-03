@@ -1,6 +1,7 @@
+import _ from 'lodash'
 import { CQWebSocket, CQAt } from 'cq-websocket'
 import { CQHTTP_WS_HOST, CQHTTP_WS_PORT, injectCQWS } from '@qqbot/utils'
-import { IgnoreUsers, PoiGroups } from '@qqbot/utils'
+import { IgnoreUsers, PoiGroups, Stewards } from '@qqbot/utils'
 import { textsplit } from '@qqbot/utils'
 import { initStore, getStore, putStore } from './store'
 import Amnesty from './amnesty'
@@ -44,7 +45,7 @@ QQ.on('message.group', async (e, ctx, ...args) => {
 
   const r = runtimes[group_id] || {
     skills: [],
-    list_sleep: 0,
+    listts: 0,
   }
   const g = await getStore(group_id, {
     group_id: group_id,
@@ -56,13 +57,23 @@ QQ.on('message.group', async (e, ctx, ...args) => {
   const user_lv = await QQ.getGroupMemberLevel(group_id, user_id)
 
   // Query all skills
-  // if (message === '/skill' && Date.now() >= r.list_sleep + 5*60*1000) {
-  //   r.list_sleep = Date.now()
-  //   return [
-  //     '可用技能',
-  //     ...Skills.map(s => `${s.Name} Lv.${s.RequiredLevel}`),
-  //   ].join('\n')
-  // }
+  if (message === '/cast list' && Date.now() >= r.listts + 5*60*1000) {
+    r.listts = Date.now()
+    return [
+      '【技能列表】',
+      ...Object.entries(SkillMap).map(([name, Skill]) => `${name} Lv.${Skill.RequiredLevel}`),
+    ].join('\n')
+  }
+  // Query group member level summary
+  if (message === '/cast stat' && Stewards.includes(user_id)) {
+    r.listts = Date.now()
+    const ulvs = await QQ.getGroupMemberLevelAll(group_id)
+    const lvc = _.countBy(ulvs)
+    return [
+      '【等级统计】',
+      ...Object.keys(lvc).sort().reverse().map(lv => `Lv.${lv} ${lvc[lv]}`),
+    ].join('\n')
+  }
 
   // Cast new skill
   let is_cast = false
@@ -73,7 +84,7 @@ QQ.on('message.group', async (e, ctx, ...args) => {
     const user_skill = u.skills[Skill.name] || {
       castts: 0,
     }
-    const admin = await QQ.isGroupAdmin(group_id, user_id)
+    const admin = Stewards.includes(user_id) || await QQ.isGroupAdmin(group_id, user_id)
     if (!admin && user_lv < Skill.RequiredLevel)
       return `${new CQAt(user_id)}\n【${cast_name}】需要群活跃等级Lv.${Skill.RequiredLevel}，您当前等级Lv.${user_lv}`
     if (!admin && nowts <= (user_skill.castts + Skill.Cooldown * 60000)) {
