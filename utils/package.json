@@ -14,7 +14,7 @@
     "eslint": "^5.15.2"
   },
   "dependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "node-cache": "^4.2.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
